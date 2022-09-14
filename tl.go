@@ -4,7 +4,10 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"reflect"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -53,6 +56,38 @@ func loadTranslation(locale string) {
 	err = json.Unmarshal(content, &translations)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func LoadFromFile(file *os.File) {
+	registerReplacer()
+
+	info, err := file.Stat()
+	if err != nil {
+		panic(err)
+	}
+
+	splitted := strings.Split(info.Name(), ".")
+	if ext := splitted[len(splitted)-1]; ext != "json" {
+		panic("the file you want to open is not in json format")
+	}
+
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(content, &translations)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, tl := range translations {
+		err = isTranslationValid(tl)
+		if err != nil {
+			translations = map[string]any{}
+			panic(err)
+		}
 	}
 }
 

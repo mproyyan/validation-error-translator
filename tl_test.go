@@ -2,6 +2,7 @@ package tl
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/go-playground/validator/v10"
@@ -142,4 +143,13 @@ func TestAddTranslationsFailed(t *testing.T) {
 
 	_, falsy := translations["test"]
 	assert.False(t, falsy)
+}
+
+func TestLoadFromFile(t *testing.T) {
+	file, _ := os.Open("lang/en.json")
+	defer file.Close()
+
+	LoadFromFile(file)
+
+	assert.NotNil(t, translations)
 }
