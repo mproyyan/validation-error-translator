@@ -71,8 +71,13 @@ func Translate(f validator.FieldError) string {
 		return rl.replace(tl, f)
 	}
 
-	data, isNested := raw.(map[string]any)
-	if !isNested {
+	var data M
+	switch raw.(type) {
+	case map[string]any:
+		data = (M)(raw.(map[string]any))
+	case M:
+		data = raw.(M)
+	default:
 		panic("translation invalid, make sure it was string or use M if you want to make nested translation.")
 	}
 
@@ -142,5 +147,69 @@ func AddTranslation(tag, translation string, override bool) {
 		// if translation exists and override is true
 		// then replace old translation with new one
 		translations[tag] = translation
+	}
+}
+
+// adding or replace batch of translations
+func AddTranslations(tls M, override bool) {
+	for tag, tl := range tls {
+		existsTl, exists := translations[tag]
+		if !exists {
+			err := isTranslationValid(tl)
+			if err != nil {
+				panic(err)
+			}
+
+			translations[tag] = tl
+			continue
+		}
+
+		switch tl.(type) {
+		case string:
+			if override {
+				err := isTranslationValid(tl)
+				if err != nil {
+					panic(err)
+				}
+				translations[tag] = tl
+			}
+		case M:
+			result := tl.(M).filter(existsTl, override)
+			err := isTranslationValid(result)
+			if err != nil {
+				panic(err)
+			}
+
+			translations[tag] = result
+		default:
+			panic("translation invalid, make sure it was string or use M type if you want to make nested translation.")
+		}
+	}
+}
+
+// translation must be string
+// if you want to make or replace nested transtion you must use M type
+// the value of nested translation must be string
+func isTranslationValid(tl any) error {
+	switch tl.(type) {
+	case string:
+		return nil
+	case M, map[string]any:
+		var ms M
+		if _, ok := tl.(map[string]any); ok {
+			ms = (M)(tl.(map[string]any))
+		} else {
+			ms = tl.(M)
+		}
+
+		for _, m := range ms {
+			if _, ok := m.(string); !ok {
+				return fmt.Errorf("value of nested translation must be string")
+			}
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("translation invalid, make sure it was string or use M type if you want to make nested translation")
 	}
 }

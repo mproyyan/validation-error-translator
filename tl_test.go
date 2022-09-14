@@ -69,3 +69,77 @@ func TestReplaceTranslation(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, "changed", tl.(string))
 }
+
+func TestAddTranslations(t *testing.T) {
+	Load("en")
+
+	tls := M{
+		"test": "just test",
+		"nested": M{
+			"c1": "ok",
+		},
+	}
+
+	AddTranslations(tls, false)
+
+	test, found := translations["test"]
+	assert.True(t, found)
+	assert.Equal(t, "just test", test.(string))
+
+	nested, found := translations["nested"]
+	assert.True(t, found)
+	assert.Equal(t, "ok", nested.(M)["c1"])
+}
+
+func TestReplaceTranslations(t *testing.T) {
+	Load("en")
+
+	tls := M{
+		"required": "gak boleh kosong coy",
+		"min": M{
+			"numeric": "gak boleh lebih dari :p ya coyyy",
+		},
+		"lte": "jadi bukan nested",
+		"semver": M{
+			"nested": "jadi nested coy",
+		},
+	}
+
+	AddTranslations(tls, true)
+
+	required, ok := translations["required"]
+	assert.True(t, ok)
+	assert.Equal(t, "gak boleh kosong coy", required.(string))
+
+	min, ok := translations["min"]
+	assert.True(t, ok)
+	assert.Equal(t, "gak boleh lebih dari :p ya coyyy", min.(M)["numeric"])
+
+	lte, ok := translations["lte"]
+	assert.True(t, ok)
+	assert.Equal(t, "jadi bukan nested", lte.(string))
+
+	semver, ok := translations["semver"]
+	assert.True(t, ok)
+	assert.Equal(t, "jadi nested coy", semver.(M)["nested"])
+}
+
+func TestAddTranslationsFailed(t *testing.T) {
+	Load("en")
+
+	tls := M{
+		// "error": 78787, //cause of error
+		"test": M{
+			"vvvv": M{ // cause of error
+				"ghdjf": "jfkg",
+			},
+		},
+	}
+
+	assert.Panics(t, func() {
+		AddTranslations(tls, false)
+	})
+
+	_, falsy := translations["test"]
+	assert.False(t, falsy)
+}
