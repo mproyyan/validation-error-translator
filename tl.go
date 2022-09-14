@@ -129,3 +129,18 @@ func getNestedTag(data map[string]any, f validator.FieldError) string {
 
 	return translation
 }
+
+// adding single translation
+func AddTranslation(tag, translation string, override bool) {
+	// first search translation
+	_, exists := translations[tag]
+
+	// if translation didn't exist, then just add
+	if !exists {
+		translations[tag] = translation
+	} else if exists && override {
+		// if translation exists and override is true
+		// then replace old translation with new one
+		translations[tag] = translation
+	}
+}

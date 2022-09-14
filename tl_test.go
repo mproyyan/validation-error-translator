@@ -49,3 +49,23 @@ func TestTranslate(t *testing.T) {
 		}
 	}
 }
+
+func TestAddTranslation(t *testing.T) {
+	Load("en")
+
+	AddTranslation("test", "just test", false)
+
+	tl, ok := translations["test"]
+	assert.True(t, ok)
+	assert.Equal(t, "just test", tl.(string))
+}
+
+func TestReplaceTranslation(t *testing.T) {
+	Load("en")
+
+	AddTranslation("required", "changed", true)
+
+	tl, ok := translations["required"]
+	assert.True(t, ok)
+	assert.Equal(t, "changed", tl.(string))
+}
