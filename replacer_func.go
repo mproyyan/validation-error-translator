@@ -33,7 +33,7 @@ func replaceActualTagPlaceholder(raw string, f validator.FieldError) string {
 }
 
 func replaceStructNamespacePlaceholder(raw string, f validator.FieldError) string {
-	return strings.Replace(raw, ":sn", f.Tag(), -1)
+	return strings.Replace(raw, ":sn", f.StructNamespace(), -1)
 }
 
 func replaceNamespacePlaceholder(raw string, f validator.FieldError) string {

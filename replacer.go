@@ -25,6 +25,13 @@ func newReplacerList() *replacerList {
 	return &replacerList{}
 }
 
+func registerReplacer() {
+	rl = newReplacerList()
+	for _, r := range replacers {
+		rl.Add(r)
+	}
+}
+
 func (r *replacer) reset() {
 	r.tl = ""
 }
