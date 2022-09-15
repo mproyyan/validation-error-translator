@@ -6,7 +6,7 @@ ex: tag `required` will be translated to `The field cannot be empty.`
 
 ## Instalation
 Use go get.
-```console
+```
 go get github.com/mproyyan/validation-error-translator
 ```
 
@@ -39,7 +39,7 @@ func main() {
    err := validation.Struct(s)
    if err != nil {
       for _, field := range err.(validator.ValidationErrors) {
-         errTl := tl.Translate(fiels)
+         errTl := tl.Translate(field)
          fmt.Prinln(errTl)
       }
    }
