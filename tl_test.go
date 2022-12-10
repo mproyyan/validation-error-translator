@@ -23,7 +23,6 @@ func TestLoadTranlation(t *testing.T) {
 
 	// check if translation loaded successfully
 	assert.NotNil(t, translations)
-	fmt.Println(translations)
 }
 
 func TestLoadTranslationFailed(t *testing.T) {
