@@ -26,6 +26,9 @@ func TestLoadTranlation(t *testing.T) {
 }
 
 func TestLoadTranslationFailed(t *testing.T) {
+	// make sure translations is empty for the first time
+	translations = nil
+
 	assert.Panics(t, func() {
 		Load("nothing")
 	})
@@ -125,6 +128,9 @@ func TestReplaceTranslations(t *testing.T) {
 }
 
 func TestAddTranslationsFailed(t *testing.T) {
+	// make sure translations is empty for the first time
+	translations = nil
+
 	Load("en")
 
 	tls := M{
