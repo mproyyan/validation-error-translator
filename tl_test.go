@@ -1,7 +1,6 @@
 package tl
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -44,11 +43,17 @@ func TestTranslate(t *testing.T) {
 		Data: []string{"hgfjksd", "ghfshg"},
 	}
 
+	expects := []string{
+		"The Name cannot be empty.",
+		"The Num must be less than or equal to 100.",
+		"The Data must not have more than 1 items.",
+	}
+
 	err := validation.Struct(s)
 	if err != nil {
 		ferr := err.(validator.ValidationErrors)
-		for _, f := range ferr {
-			fmt.Println(Translate(f))
+		for i, f := range ferr {
+			assert.Equal(t, expects[i], Translate(f))
 		}
 	}
 }
